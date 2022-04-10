@@ -2,15 +2,13 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
-using RustedWarfareClient;
-
 namespace OGLT;
 
 internal static class Program
 {
     static void Main()
     {
-        Console.WriteLine("Hello World!");
+        Init();
     }
 
     private static void Init()
