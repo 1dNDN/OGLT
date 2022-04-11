@@ -23,13 +23,25 @@ public class Vent : GameWindow
     private int vertexArrayObject2;
     private int elementBufferObject2;
 
-    private readonly float[] vertices = { 0.0f, 0.5f, 0.0f, 0.0f, -0.5f, 0.0f, 0.5f, 0.0f, 0.0f };
+    private readonly float[] vertices = {
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+    };
 
-    private readonly int[] indices = { 0, 1, 2 };
+    private readonly int[] indices = {
+        0, 1, 2
+    };
 
-    private readonly float[] vertices2 = { -0.5f, -0.5f, 0.0f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f };
+    private readonly float[] vertices2 = {
+        -0.5f, -0.5f, 0.0f,
+        -0.5f, 0.5f, 0.0f,
+        0.0f, 0.0f, 0.0f
+    };
 
-    private readonly int[] indices2 = { 0, 1, 2 };
+    private readonly int[] indices2 = {
+        0, 1, 2
+    };
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
@@ -47,6 +59,7 @@ public class Vent : GameWindow
         float red = (float)Math.Cos(DateTime.Now.Millisecond / 100.0F) / 2.0F + 0.5F;
         int uniColorLocation = GL.GetUniformLocation(shader2.Handle, "uniColor");
         GL.Uniform4(uniColorLocation, red, green, 0.2F, 1.0F);
+        
 
         GL.BindVertexArray(vertexArrayObject2);
         GL.DrawElements(PrimitiveType.Triangles, indices2.Length, DrawElementsType.UnsignedInt, 0);
@@ -70,8 +83,10 @@ public class Vent : GameWindow
 
         vertexArrayObject = GL.GenVertexArray();
         GL.BindVertexArray(vertexArrayObject);
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
+        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+        GL.EnableVertexAttribArray(1);
 
         elementBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferObject);
@@ -91,7 +106,7 @@ public class Vent : GameWindow
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferObject2);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices2.Length * sizeof(uint), indices2, BufferUsageHint.StaticDraw);
 
-        GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+        GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
 
         shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
         shader.Use();
