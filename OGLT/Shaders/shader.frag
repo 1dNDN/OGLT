@@ -10,6 +10,5 @@ uniform sampler2D ourTexture;
 void main()
 {
     vec4 texColor = texture(ourTexture, texCoord);
-    outputColor = texColor;
-    //outputColor = sin(vec4(ourColor, 1.0f) * texColor);
+    outputColor = sin(vec4(ourColor, 1.0f) * texColor);
 }
