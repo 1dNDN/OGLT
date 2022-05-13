@@ -6,15 +6,14 @@ namespace OGLT;
 
 internal static class Program
 {
-    static void Main()
+    private static void Main()
     {
         Init();
     }
 
     private static void Init()
     {
-        NativeWindowSettings nativeWindowSettings = new()
-        {
+        NativeWindowSettings nativeWindowSettings = new() {
             Size = new Vector2i(800, 600),
             Title = "RW Client",
             Flags = ContextFlags.ForwardCompatible
