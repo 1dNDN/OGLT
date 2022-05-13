@@ -19,8 +19,9 @@ public class Vent : GameWindow
         -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f, //bottom left
         -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f  //top left
     };
+    
+    private Camera camera;
     private int elementBufferObject;
-
     private Shader shader = null!;
     private Texture texture;
     private int vertexArrayObject;
@@ -41,20 +42,14 @@ public class Vent : GameWindow
 
         GL.BindVertexArray(vertexArrayObject);
 
-        Matrix4 rotationY = Matrix4.CreateRotationY(DateTime.Now.Millisecond / 200.0f);
-        Matrix4 rotationX = Matrix4.CreateRotationX(DateTime.Now.Millisecond / 200.0f + 200);
-        //Matrix4 model = rotationY * rotationX;
         Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
-
-        Matrix4 view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), Size.X / (float)Size.Y, 0.1f, 100.0f);
 
         texture.Use(TextureUnit.Texture0);
         shader.Use();
 
         shader.SetMatrix4("model", model);
-        shader.SetMatrix4("view", view);
-        shader.SetMatrix4("projection", projection);
+        shader.SetMatrix4("view", camera.GetViewMatrix());
+        shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
         GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
@@ -98,17 +93,56 @@ public class Vent : GameWindow
         int texLocaton = shader.GetAttribLocation("aTexCoord");
         GL.VertexAttribPointer(texLocaton, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
         GL.EnableVertexAttribArray(texLocaton);
+        
+        camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
         texture = Texture.LoadFromFile("Textures/container.jpg");
         texture.Use(TextureUnit.Texture0);
 
+        CursorGrabbed = true;
         GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
+        if (!IsFocused)
+        {
+            return;
+        }
+        
+        float cameraSpeed = 1.5f;
+        const float sensitivity = 0.2f;
+
         if (KeyboardState.IsKeyDown(Keys.Escape))
             Close();
+        if (KeyboardState.IsKeyDown(Keys.LeftControl))
+        {
+            cameraSpeed *= 2;
+        }
+        if (KeyboardState.IsKeyDown(Keys.W))
+        {
+            camera.Position += camera.Front * cameraSpeed * (float)args.Time; // Forward
+        }
+        if (KeyboardState.IsKeyDown(Keys.S))
+        {
+            camera.Position -= camera.Front * cameraSpeed * (float)args.Time; // Backwards
+        }
+        if (KeyboardState.IsKeyDown(Keys.A))
+        {
+            camera.Position -= camera.Right * cameraSpeed * (float)args.Time; // Left
+        }
+        if (KeyboardState.IsKeyDown(Keys.D))
+        {
+            camera.Position += camera.Right * cameraSpeed * (float)args.Time; // Right
+        }
+        if (KeyboardState.IsKeyDown(Keys.Space))
+        {
+            camera.Position += camera.Up * cameraSpeed * (float)args.Time; // Up
+        }
+        if (KeyboardState.IsKeyDown(Keys.LeftShift))
+        {
+            camera.Position -= camera.Up * cameraSpeed * (float)args.Time; // Down
+        }
 
         base.OnUpdateFrame(args);
     }
