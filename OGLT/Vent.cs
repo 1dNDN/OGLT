@@ -43,16 +43,20 @@ public class Vent : GameWindow
 
         GL.BindVertexArray(vertexArrayObject);
 
-        
         Matrix4 rotationY = Matrix4.CreateRotationY(DateTime.Now.Millisecond / 200.0f);
         Matrix4 rotationX = Matrix4.CreateRotationX(DateTime.Now.Millisecond / 200.0f + 200);
-        Matrix4 scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
-        Matrix4 trans = rotationY * rotationX * scale;
+        //Matrix4 model = rotationY * rotationX;
+        Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
+        
+        Matrix4 view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
+        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), Size.X / (float)Size.Y, 0.1f, 100.0f);
 
         texture.Use(TextureUnit.Texture0);
         shader.Use();
         
-        shader.SetMatrix4("transform", trans);
+        shader.SetMatrix4("model", model);
+        shader.SetMatrix4("view", view);
+        shader.SetMatrix4("projection", projection);
         
         GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
         
