@@ -22,7 +22,7 @@ namespace OGLT
             Image<Rgba32> image = Image.Load<Rgba32>(path);
             image.Mutate(x => x.Flip(FlipMode.Vertical));
 
-            var pixels = new List<byte>(4 * image.Width * image.Height);
+            List<byte> pixels = new(4 * image.Width * image.Height);
 
             image.ProcessPixelRows(accessor => {
                 Rgba32 transparent = Color.Transparent;

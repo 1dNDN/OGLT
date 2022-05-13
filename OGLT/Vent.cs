@@ -1,6 +1,7 @@
 using System.Diagnostics;
 
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -42,8 +43,16 @@ public class Vent : GameWindow
 
         GL.BindVertexArray(vertexArrayObject);
 
+        
+        Matrix4 rotationY = Matrix4.CreateRotationY(DateTime.Now.Millisecond / 200.0f);
+        Matrix4 rotationX = Matrix4.CreateRotationX(DateTime.Now.Millisecond / 200.0f + 200);
+        Matrix4 scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
+        Matrix4 trans = rotationY * rotationX * scale;
+
         texture.Use(TextureUnit.Texture0);
         shader.Use();
+        
+        shader.SetMatrix4("transform", trans);
         
         GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
         
@@ -90,7 +99,7 @@ public class Vent : GameWindow
         
         texture = Texture.LoadFromFile("Textures/container.jpg");
         texture.Use(TextureUnit.Texture0);
-
+        
         GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
     }
 
